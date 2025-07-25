@@ -1,0 +1,5 @@
+GET     /               controllers.HomeController.index
+GET     /employees      controllers.EmployeeController.testListEmployees
+POST    /employees      controllers.EmployeeController.createEmployee
+GET     /contracts      controllers.ContractController.testListContracts
+POST    /contracts      controllers.ContractController.createContract
