@@ -14,7 +14,7 @@ class EmployeeController @Inject()(
                               )(implicit ec: ExecutionContext) extends BaseController {
 
 
-  def testListEmployees = Action.async {
+  def testListEmployees: Action[AnyContent] = Action.async {
     repo.listEmployees().map { employees =>
       if(employees.isEmpty) {
         Ok(Json.obj("message" -> "No employees found"))
@@ -33,6 +33,16 @@ class EmployeeController @Inject()(
         }
       }
     )
+  }
+
+  def deleteEmployee(id: Long): Action[AnyContent] = Action.async {
+    repo.deleteEmployee(id).map { deletedCount =>
+      if(deletedCount > 0) {
+        Ok(Json.obj("message" -> s"Employee $id deleted successfully"))
+      } else {
+        Ok(Json.obj("message" -> s"Employee $id not found"))
+      }
+    }
   }
 
 

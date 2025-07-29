@@ -1,5 +1,9 @@
 GET     /               controllers.HomeController.index
 GET     /employees      controllers.EmployeeController.testListEmployees
 POST    /employees      controllers.EmployeeController.createEmployee
+DELETE  /employees/:id  controllers.EmployeeController.deleteEmployee(id: Long)
+
 GET     /contracts      controllers.ContractController.testListContracts
 POST    /contracts      controllers.ContractController.createContract
+DELETE  /contracts/:id  controllers.ContractController.deleteContract(id: Long)
+GET     /employees/:employeeId/contracts   controllers.ContractController.getContractsByEmployee(employeeId: Long)

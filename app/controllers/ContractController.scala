@@ -36,4 +36,19 @@ class ContractController @Inject()(
         }
       }
   )}
+
+  def deleteContract(id: Long): Action[AnyContent] = Action.async {
+  repo.deleteContract(id).map { deletedCount =>
+    if(deletedCount > 0) {
+      Ok(Json.obj("message" -> s"Contract $id for employee  has been deleted successfully"))
+    } else {
+      Ok(Json.obj("message" -> s"Contract $id not found"))
+    }
+  }}
+
+  def getContractsByEmployee(employeeId: Long): Action[AnyContent] = Action.async {
+    repo.findContractsByEmployeeId(employeeId).map { contracts =>
+      Ok(Json.toJson(contracts))
+    }
+  }
 }

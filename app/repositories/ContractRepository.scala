@@ -4,12 +4,13 @@ import com.google.inject.{Inject, Singleton}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import models.Contract
+import play.api.mvc.{Action, AnyContent}
+
 import slick.lifted.TableQuery
-import tables.EmployeeTable
 import slick.jdbc.MySQLProfile.api._
 import tables.ContractTable
+import scala.concurrent.{ExecutionContext, Future}
 
-import scala.concurrent.Future
 
 
 //INJECT - allows play to "inject" dependencies and essentially allow for the database connection
@@ -19,7 +20,7 @@ import scala.concurrent.Future
 
 import scala.concurrent.ExecutionContext
 @Singleton
-class ContractRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
+class ContractRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
 
   private val dbconfig = dbConfigProvider.get[JdbcProfile]
   //This gives you the Slick database configuration of the type of database configuration (profile) you're using - in my case this is MySQLProfile - it essentially acts a translator for the specific database type to ensure queries are run correctly.
@@ -44,5 +45,16 @@ class ContractRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
       ) += contract
     db.run(insertQuery)
   }
+
+  def deleteContract(id: Long): Future[Int] = {
+    db.run(contracts.filter(_.id === id).delete)
+  }
+
+  //Get all contracts for a specific employeeId
+  def findContractsByEmployeeId(employeeId: Long): Future[Seq[Contract]] = {
+    db.run(contracts.filter(_.employeeId === employeeId).result)
+  }
+
+
 
 }
