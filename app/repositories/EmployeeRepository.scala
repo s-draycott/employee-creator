@@ -6,6 +6,7 @@ import slick.jdbc.JdbcProfile
 import models.Employee
 import slick.lifted.TableQuery
 import tables.EmployeeTable
+import tables.ContractTable
 import slick.jdbc.MySQLProfile.api._
 
 
@@ -35,10 +36,18 @@ class EmployeeRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
 
   //this allows us to run queries
   private val employees = TableQuery[EmployeeTable]
+  private val contractsTable = TableQuery[ContractTable]
 
   //function to list all employees - returns a future list of employee objects
   def listEmployees(): Future[Seq[Employee]] = {
-    db.run(employees.result)
+    val query = for {
+      (e, c) <- employees joinLeft contractsTable on (_.id === _.employeeId)
+    } yield (e,c)
+    db.run(query.result).map { rows =>
+      rows.groupBy(_._1).map { case (employeeRow, contractsRows) =>
+        employeeRow.copy(contracts = contractsRows.flatMap(_._2))
+      }.toSeq
+    }
   }
 
   //Function to create an employee

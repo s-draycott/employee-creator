@@ -13,5 +13,11 @@ class EmployeeTable(tag: Tag) extends Table[Employee](tag, "employee") {
   def address = column[String]("address")
 
   // 👇 Mapping columns to the case class
-  def * = (id.?, firstName, lastName, email, mobileNumber, address) <> ((Employee.apply _).tupled, Employee.unapply)
+  def * =
+    (id.?, firstName, lastName, email, mobileNumber, address) <> (
+      { case (id, fn, ln, em, mob, addr) =>
+        Employee(id, fn, ln, em, mob, addr) // contracts defaults to Seq.empty
+      },
+      (e: Employee) => Some((e.id, e.firstName, e.lastName, e.email, e.mobileNumber, e.address))
+    )
 }

@@ -8,8 +8,9 @@ case class Employee (
   lastName: String,
   email: String,
   mobileNumber: String,
-  address: String
-)
+  address: String,
+  contracts: Seq[Contract] = Seq.empty
+  )
 
 //This creates a companion object for your Employee case class. A companion object is a special object in Scala that has the same name as a class or case class, and is used to define shared functionality for it.
 /*
